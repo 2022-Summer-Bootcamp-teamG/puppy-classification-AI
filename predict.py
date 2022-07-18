@@ -40,6 +40,14 @@ def image_to_tensor(img_bytes):
 class_names = json.load(open('./imagenet_class_index.json'))
 
 
+def softmax(x):
+    return np.exp(x) / np.sum(np.exp(x), axis=0)
+
+
+def probability(x):
+    return softmax(x) * 100
+
+
 def predict_breed(img_bytes):
     # load the image and return the predicted breed
     image_tensor = image_to_tensor(img_bytes)
@@ -50,7 +58,14 @@ def predict_breed(img_bytes):
 
     # get sample outputs
     output = model_transfer(image_tensor)
-    _, preds_tensor = torch.max(output, 1)
-    pred = np.squeeze(preds_tensor.numpy()) if not use_cuda else np.squeeze(preds_tensor.cpu().numpy())
+    # convert output probabilities to predicted class
 
-    return class_names[str(pred)]
+    output = output.cpu().detach().numpy()
+    percentage = probability(output[0])
+    index = np.where(np.array(percentage) >= 50.)[0]
+
+    result = []
+    for i in index:
+        result.append({'breed_id': str(i), 'percent': str(percentage[i]), 'breed': class_names[str(i)][1]})
+
+    return result
