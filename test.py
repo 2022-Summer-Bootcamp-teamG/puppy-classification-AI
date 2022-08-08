@@ -18,9 +18,7 @@ def test(loaders, model, criterion, use_gpu):
         # move to GPU
         if use_cuda:
             data, target = data.cuda(), target.cuda()
-        # forward pass: compute predicted outputs by passing inputs to the model
         output = model(data)
-        # calculate the loss
         loss = criterion(output, target)
 
         # update average test loss
@@ -42,6 +40,7 @@ def test(loaders, model, criterion, use_gpu):
         100. * correct / total, correct, total))
 
 
+# select model
 use_cuda = torch.cuda.is_available()
 use_pretrained = True
 model_transfer = models.vgg16(pretrained=use_pretrained)

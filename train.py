@@ -88,7 +88,7 @@ data_loaders = {
 
 class_names = image_datasets['train'].classes
 
-### 각종 파라미터 설정
+### set param
 model = models.vgg16(pretrained=True)
 batch_size = 5
 epochs = 20
